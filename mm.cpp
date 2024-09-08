@@ -54,6 +54,10 @@ MmAllocateBlock(
 
         if ( CurrentBlock->IsAllocated )
         {
+            //
+            // If the current block is already allocated advance
+            // our iterator by the amount of blocks the allocation uses
+            //
             I += MmRoundToBlockSize( CurrentBlock->AllocationSize ) / MM_BLOCK_SIZE;
 
             continue;

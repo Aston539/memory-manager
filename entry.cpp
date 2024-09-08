@@ -17,8 +17,7 @@ int main()
 
     printf( "TestAlloc: 0x%p\n", TestAlloc );
     printf( "TestAlloc2: 0x%p\n", TestAlloc2 );
-    printf( "Difference: 0x%lX\n", TestAlloc2 - TestAlloc );
-
+    
     memset( TestAlloc + 00, 1, 10 );
     memset( TestAlloc + 10, 2, 10 );
     memset( TestAlloc + 20, 3, 5  );
