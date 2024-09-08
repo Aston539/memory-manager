@@ -10,8 +10,17 @@
 #define MmZeroMemory( Base, Size ) memset( Base, NULL, Size )
 #endif
 
+#ifndef MM_MAX_BLOCKS
 #define MM_MAX_BLOCKS 256
+#endif
+
+#ifndef MM_BLOCK_SIZE
 #define MM_BLOCK_SIZE 16
+#endif
+
+#ifndef MmRoundToBlockSize
+#define MmRoundToBlockSize( Size ) (((Size) + (MM_BLOCK_SIZE - 1)) & ~(MM_BLOCK_SIZE - 1))
+#endif
 
 typedef struct _MM_BLOCK
 {

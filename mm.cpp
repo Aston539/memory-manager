@@ -38,7 +38,7 @@ MmAllocateBlock(
     // Calculate how many blocks we are going to need
     // to fulfil the allocation
     //
-    ULONG NeededBlocks = Size / MM_BLOCK_SIZE;
+    ULONG NeededBlocks = MmRoundToBlockSize( Size ) / MM_BLOCK_SIZE;
 
     for ( ULONG I = NULL; I < MM_MAX_BLOCKS; I++ )
     {
@@ -54,6 +54,8 @@ MmAllocateBlock(
 
         if ( CurrentBlock->IsAllocated )
         {
+            I += MmRoundToBlockSize( CurrentBlock->AllocationSize ) / MM_BLOCK_SIZE;
+
             continue;
         }
 
@@ -108,12 +110,31 @@ MmFindBlockByAllocation(
         return FALSE;
     }
 
-    for ( ULONG I = NULL; I < MmAllocation.AllocatedBlocksCount; I++ )
+    for ( ULONG I = NULL; I <= MmAllocation.AllocatedBlocksCount; I++ )
     {
         PMM_BLOCK CurrentBlock = &MmAllocation.Blocks[ I ];
 
-        if ( CurrentBlock->BlockBase == Allocation )
+        //
+        // Ensure the current block is allocated
+        //
+        if ( CurrentBlock->IsAllocated == TRUE )
         {
+            //
+            // Check whether this is our target allocation
+            //
+            if ( CurrentBlock->BlockBase != Allocation )
+            {
+                //
+                // If this isnt our target allocation then
+                // advance our iterator by allocated block count
+                //
+                ULONG RoundedSize = MmRoundToBlockSize( CurrentBlock->AllocationSize );
+
+                I += ( RoundedSize / MM_BLOCK_SIZE );
+
+                continue;
+            }
+
             *Block = CurrentBlock;
 
             return TRUE;
